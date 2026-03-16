@@ -1,0 +1,30 @@
+# application.yml — аналог application.yml у Spring Boot
+# Конфігурація системи управління інвестиційним портфелем (Лаб. №3)
+
+app:
+  name: Investment Portfolio Management API
+  version: "2.0.0"
+  description: "REST API — Лабораторна робота №3"
+
+server:
+  host: "0.0.0.0"
+  port: 8000
+  reload: true          # аналог spring-boot-devtools hot reload
+
+database:
+  # SQLite (аналог H2 у Spring Boot)
+  url: "sqlite:///./investment_portfolio.db"
+  echo: false           # true → виводити SQL у консоль (аналог show-sql: true)
+
+  # Для переходу на PostgreSQL змінити лише url:
+  # url: "postgresql://user:password@localhost:5432/investment_portfolio"
+
+  # Аналог Spring JPA ddl-auto
+  # create_tables: true  → таблиці створюються автоматично при старті
+
+pagination:
+  default_page_size: 10
+  max_page_size: 100
+
+logging:
+  level: INFO
