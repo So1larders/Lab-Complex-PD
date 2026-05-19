@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api_gateway/Dockerfile
+    container_name: api_gateway
+    ports:
+      - "8888:8000"
+    environment:
+      - PORTFOLIO_SERVICE_URL=http://portfolio-service:8001
+      - TRADING_SERVICE_URL=http://trading-service:8002
+    depends_on:
+      - portfolio-service
+      - trading-service
+
+  portfolio-service:
+    build:
+      context: .
+      dockerfile: portfolio_service/Dockerfile
+    container_name: portfolio_service
+    ports:
+      - "8001:8001"
+    environment:
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - ./portfolio.db:/app/portfolio.db
+      - ./investment_portfolio.db:/app/investment_portfolio.db
+    depends_on:
+      - redis
+
+  trading-service:
+    build:
+      context: .
+      dockerfile: trading_service/Dockerfile
+    container_name: trading_service
+    ports:
+      - "8002:8002"
+    environment:
+      - PORTFOLIO_SERVICE_URL=http://portfolio-service:8001
+    volumes:
+      - ./trading.db:/app/trading.db
+      - ./investment_portfolio.db:/app/investment_portfolio.db
